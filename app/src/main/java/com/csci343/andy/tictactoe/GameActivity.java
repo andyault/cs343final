@@ -15,7 +15,6 @@ public class GameActivity extends AppCompatActivity {
     //private variables
     private TicTacToeGame game;
     private boolean isPVP;
-    private int totIndex = 1;
     private boolean isPlayerTurn = true;
     private int currentPiece = 1;
 
@@ -99,8 +98,10 @@ public class GameActivity extends AppCompatActivity {
         this.game.invalidate();
     }
 
-    public void prepNextMove()
-    {
+    /**
+     * prepare to switch between players/computer
+     */
+    public void prepNextMove() {
         /*
         TODO
         first, toggle between 1 and 2 for currentPiece
@@ -117,126 +118,85 @@ public class GameActivity extends AppCompatActivity {
             call fillSpace
          */
 
-        if(this.isPVP)
-        {
-            if(currentPiece == 1)
-            {
-                currentPiece = 2;
-            } else
-            {
-                currentPiece = 1;
-            }
-            multiPlayer();
-        }
-        else
-        {
-            int i = 0;
-            int j = 0;
-            aI(i, j);
-        }
+        this.currentPiece = (this.currentPiece == 1 ? 2 : 1);
 
+        if(this.isPVP)
+            movePlayers();
+        else
+            moveComputer();
     }
 
-    public void multiPlayer()
-    {
+    /**
+     * switch moves in pvp game
+     */
+    public void movePlayers() {
         TextView player = (TextView)findViewById(R.id.txtTurn);
 
         if(currentPiece == 1)
-        {
             player.setText(R.string.txt_game_turn_p1);
-        }
         else
-        {
             player.setText(R.string.txt_game_turn_p2);
-        }
     }
 
-    /*
-    TODO
-    detect when someone wins
+    /**
+     * switch moves in pvc game
      */
-    public void aI(int i, int j) {
+    public void moveComputer() {
         /*
         if it's ai, call another function:
         find a random, available space
-        make 1D int[] array [NUM_COLUMNS * NUM_ROWS]
+        make int arraylist
         for each value in this.game.data, if it's blank, add {i, j} to array
         select random index from 0-size of array
         call fillSpace
          */
 
-        if (totIndex % 2 == 1 && currentPiece == 1) {
-            TextView player = (TextView) findViewById(R.id.txtTurn);
-            player.setText(R.string.txt_game_turn_p);
-            currentPiece = 2;
-        }
-        else if (totIndex % 2 == 0 && currentPiece == 2) {
-            currentPiece = 1;
-            TextView player = (TextView) findViewById(R.id.txtTurn);
+        TextView player = (TextView)findViewById(R.id.txtTurn);
+
+        if(currentPiece == 1) {
+            //if it's player 1's turn, we don't have to worry about picking spaces etc
+            player.setText(R.string.txt_game_turn_p1);
+
+            return;
+        } else
             player.setText(R.string.txt_game_turn_c);
-            ArrayList<Integer> num = new ArrayList<Integer>();
 
-            i = 0;
-            j = 0;
-            int x = 0;
+        //prepare a list of available spaces
+        ArrayList<Integer[]> num = new ArrayList<>();
 
-
-            for (i = 0; i < game.NUM_COLUMNS; i++) {
-                for (j = 0; j < game.NUM_ROWS; j++) {
-                    if (this.game.data[i][j] == 0) {
-                        num.set(x, 0);
-                    }
+        //if any spaces are empty, add them to our list
+        for(int i = 0; i < this.game.NUM_COLUMNS; i++) {
+            for(int j = 0; j < this.game.NUM_ROWS; j++) {
+                if (this.game.data[i][j] == 0) {
+                    num.add(new Integer[]{i, j});
                 }
-                x++;
             }
-
-            Random randomizer = new Random();
-            int random = num.get(randomizer.nextInt(num.size()));
-
-            switch (random) {
-                case 1:
-                    game.data[i][j] = this.game.data[0][0];
-                    fillSpace(i, j);
-                case 2:
-                    game.data[i][j] = this.game.data[0][1];
-                    fillSpace(i, j);
-                case 3:
-                    game.data[i][j] = this.game.data[0][2];
-                    fillSpace(i, j);
-                case 4:
-                    game.data[i][j] = this.game.data[1][0];
-                    fillSpace(i, j);
-                case 5:
-                    game.data[i][j] = this.game.data[1][1];
-                    fillSpace(i, j);
-                case 6:
-                    game.data[i][j] = this.game.data[1][2];
-                    fillSpace(i, j);
-                case 7:
-                    game.data[i][j] = this.game.data[0][2];
-                    fillSpace(i, j);
-                case 8:
-                    game.data[i][j] = this.game.data[1][2];
-                    fillSpace(i, j);
-                case 9:
-                    game.data[i][j] = this.game.data[2][2];
-                    fillSpace(i, j);
-            }
-
-            //if 9, game is over (maybe use this later?)
-            /**
-             * nope -- using arraylist not
-             for(i = 0; i < 9; i++)
-             {
-             sum = num[i] + sum;
-             if(sum == 9)
-             {
-             //game is over, method call
-             }
-             }
-             */
         }
-        totIndex++;
-    }
 
+        //pick random space from list
+        Random randomizer = new Random();
+        int index = randomizer.nextInt(num.size());
+        Integer[] nextSpace = num.get(index);
+
+        //get i and j
+        int i = nextSpace[0];
+        int j = nextSpace[1];
+
+
+        //fill it
+        fillSpace(i, j);
+
+        //done :)
+        /*
+         nope -- using arraylist not
+         for(i = 0; i < 9; i++)
+         {
+         sum = num[i] + sum;
+         if(sum == 9)
+         {
+         //game is over, method call
+         }
+         }
+        */
+    }
 }
