@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TicTacToe</string>
+
+    <!-- image alts -->
+    <string name="img_logo_alt">Logo</string>
+
+    <!-- text views -->
+    <string name="txt_menu_caption">Select a game type:</string>
+
+    <!-- button texts -->
+    <string name="btn_menu_player">Player vs. Player</string>
+    <string name="btn_menu_computer">Player vs. Computer</string>
+
+    <!-- game messages -->
+    <string name="txt_game_turn_p1">Player 1\'s Turn</string>
+    <string name="txt_game_turn_p2">Player 2\'s Turn</string>
+
+    <string name="txt_game_turn_p">Player\'s Turn</string>
+    <string name="txt_game_turn_c">Computer\'s Turn</string>
+</resources>
