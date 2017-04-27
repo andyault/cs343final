@@ -51,6 +51,7 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    //logic
     /**
      * handle touching
      */
@@ -65,7 +66,7 @@ public class GameActivity extends AppCompatActivity {
             for(j = 0; j < this.game.NUM_ROWS; j++) {
                 RectF space = this.game.spaces[i][j];
 
-                if(space.contains(x, y)) {
+                if(space.contains(x, y) && this.game.data[i][j] == 0) {
                     found = true;
                     break;
                 }
@@ -88,22 +89,10 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     * actually set game data for space
-     */
-    public void fillSpace(int i, int j) {
-        //set data
-        this.game.data[i][j] = this.currentPiece;
-
-        //redraw
-        this.game.invalidate();
-    }
-
-    /**
      * prepare to switch between players/computer
      */
     public void prepNextMove() {
         /*
-        TODO
         first, toggle between 1 and 2 for currentPiece
 
         if it's pvp, call a function to handle that:
@@ -112,12 +101,22 @@ public class GameActivity extends AppCompatActivity {
 
         if it's ai, call another function:
             find a random, available space
-                make 1D int[] array [NUM_COLUMNS * NUM_ROWS]
+                make arraylist
                 for each value in this.game.data, if it's blank, add {i, j} to array
                 select random index from 0-size of array
             call fillSpace
          */
 
+        //see if game is over
+        int result = checkGameResult();
+
+        if(result != 0) {
+            endGame(result);
+
+            return;
+        }
+
+        //switch piece color
         this.currentPiece = (this.currentPiece == 1 ? 2 : 1);
 
         if(this.isPVP)
@@ -146,7 +145,7 @@ public class GameActivity extends AppCompatActivity {
         if it's ai, call another function:
         find a random, available space
         make int arraylist
-        for each value in this.game.data, if it's blank, add {i, j} to array
+        for each value in this.game.data, if it's blank, add index to array
         select random index from 0-size of array
         call fillSpace
          */
@@ -162,13 +161,13 @@ public class GameActivity extends AppCompatActivity {
             player.setText(R.string.txt_game_turn_c);
 
         //prepare a list of available spaces
-        ArrayList<Integer[]> num = new ArrayList<>();
+        ArrayList<Integer> num = new ArrayList<>();
 
         //if any spaces are empty, add them to our list
         for(int i = 0; i < this.game.NUM_COLUMNS; i++) {
             for(int j = 0; j < this.game.NUM_ROWS; j++) {
                 if (this.game.data[i][j] == 0) {
-                    num.add(new Integer[]{i, j});
+                    num.add(coordsToIndex(i, j));
                 }
             }
         }
@@ -176,7 +175,7 @@ public class GameActivity extends AppCompatActivity {
         //pick random space from list
         Random randomizer = new Random();
         int index = randomizer.nextInt(num.size());
-        Integer[] nextSpace = num.get(index);
+        int[] nextSpace = indexToCoords(num.get(index));
 
         //get i and j
         int i = nextSpace[0];
@@ -187,16 +186,101 @@ public class GameActivity extends AppCompatActivity {
         fillSpace(i, j);
 
         //done :)
-        /*
-         nope -- using arraylist not
-         for(i = 0; i < 9; i++)
-         {
-         sum = num[i] + sum;
-         if(sum == 9)
-         {
-         //game is over, method call
-         }
-         }
-        */
+        prepNextMove();
+    }
+
+    /**
+     * see if game can still be played
+     * @return -1 if draw, 0 if not ended, 1-2 if winner
+     */
+    public int checkGameResult() {
+        //see if there are any spaces left
+        boolean spacesLeft = false;
+
+        for(int i = 0; i < this.game.NUM_COLUMNS; i++) {
+            for(int j = 0; j < this.game.NUM_ROWS; j++) {
+                if(this.game.data[i][j] == 0) {
+                    spacesLeft = true;
+                    break;
+                }
+            }
+
+            if(spacesLeft)
+                break;
+        }
+
+        if(!spacesLeft)
+            return -1; //game over
+
+        //see if anyone got 3 in a row
+        //maybe don't hard code this?
+        int[][] possibilities = {
+            {0, 1, 2},
+            {3, 4, 5},
+            {6, 7, 8},
+            {0, 3, 6},
+            {1, 4, 7},
+            {2, 5, 8},
+            {0, 4, 8},
+            {2, 4, 6}
+        };
+
+        for(int i = 0; i < possibilities.length; i++) {
+            int[] spaces = possibilities[i];
+
+            int data = -1;
+            boolean winner = true;
+
+            for(int j = 0; j < 3; j++) {
+                int[] space = indexToCoords(spaces[j]);
+
+                if(data < 0)
+                    data = this.game.data[space[0]][space[1]];
+                else if(this.game.data[space[0]][space[1]] != data) {
+                    winner = false;
+                    break;
+                }
+            }
+
+            if(winner)
+                return data;
+        }
+
+        return 0;
+    }
+
+    public void endGame(int result) {
+        //TODO - make this not suck
+        String[] winners = {
+            "draw",
+            null,
+            "player 1 wins",
+            (this.isPVP ? "player 2 wins" : "computer wins")
+        };
+
+        System.out.println(winners[result + 1]);
+    }
+
+    //util
+    /**
+     * actually set game data for space
+     */
+    public void fillSpace(int i, int j) {
+        //set data
+        this.game.data[i][j] = this.currentPiece;
+
+        //redraw
+        this.game.invalidate();
+    }
+
+    public int coordsToIndex(int i, int j) {
+        return j * this.game.NUM_COLUMNS + i;
+    }
+
+    public int[] indexToCoords(int index) {
+        return new int[]{
+            index % this.game.NUM_COLUMNS,
+            (int) Math.floor(index / this.game.NUM_COLUMNS)
+        };
     }
 }
