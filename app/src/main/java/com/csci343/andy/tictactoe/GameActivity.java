@@ -2,6 +2,7 @@ package com.csci343.andy.tictactoe;
 
 import android.content.Intent;
 import android.graphics.RectF;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -191,7 +192,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * see if game can still be played
-     * @return -1 if draw, 0 if not ended, 1-2 if winner
+     * @return -1 if draw, 0 if not ended, 1-2 if activity_winner
      */
     public int checkGameResult() {
         //see if there are any spaces left
@@ -258,7 +259,11 @@ public class GameActivity extends AppCompatActivity {
             (this.isPVP ? "player 2 wins" : "computer wins")
         };
 
-        System.out.println(winners[result + 1]);
+        String winner = winners[result + 1];
+        Intent displayWinner = new Intent(this, MainActivity.class);
+        displayWinner.putExtra("winner", displayWinner);
+        startActivity(displayWinner);
+        //System.out.println(winners[result + 1]);
     }
 
     //util

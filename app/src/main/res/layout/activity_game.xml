@@ -26,4 +26,5 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/txtTurn"
         android:id="@+id/gameMain" />
+
 </RelativeLayout>

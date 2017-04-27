@@ -17,4 +17,16 @@
 
     <string name="txt_game_turn_p">Player\'s Turn</string>
     <string name="txt_game_turn_c">Computer\'s Turn</string>
+
+    <!-- winning displays-->
+    <string name="display_winner_pl1">Player 1 wins!</string>
+    <string name="display_winner_pl2">Player 2 wins!</string>
+    <string name="display_winner_c">Computer wins!</string>
+    <string name="display_winner_d">It\'s a draw!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="title_activity_winner_display">winnerDisplay</string>
+    <string name="main_Menu">Main Menu</string>
 </resources>
