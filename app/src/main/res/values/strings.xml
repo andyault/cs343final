@@ -29,4 +29,6 @@
 
     <string name="title_activity_winner_display">winnerDisplay</string>
     <string name="main_Menu">Main Menu</string>
+
+    <string name="imageView">img</string>
 </resources>

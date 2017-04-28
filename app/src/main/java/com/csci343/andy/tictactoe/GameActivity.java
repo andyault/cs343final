@@ -15,7 +15,7 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity {
     //private variables
     private TicTacToeGame game;
-    private boolean isPVP;
+    public boolean isPVP;
     private boolean isPlayerTurn = true;
     private int currentPiece = 1;
 
@@ -261,7 +261,7 @@ public class GameActivity extends AppCompatActivity {
 
         String winner = winners[result + 1];
         Intent displayWinner = new Intent(this, MainActivity.class);
-        displayWinner.putExtra("winner", displayWinner);
+        displayWinner.putExtra("winner", winner);
         startActivity(displayWinner);
         //System.out.println(winners[result + 1]);
     }
