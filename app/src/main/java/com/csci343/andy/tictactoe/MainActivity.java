@@ -11,59 +11,51 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
+    //private variables
+    private boolean isPVP;
 
-    private boolean isPvp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ImageView display = (ImageView)findViewById(R.id.tictactoe);
-        display.setImageResource(R.drawable.logo);
+        //getting intent
+        Intent intent = getIntent();
 
-        TextView displayWinner = (TextView)findViewById(R.id.winnerText);
+        this.isPVP = intent.getBooleanExtra("tictactoe.isPVP", true);
 
-        Intent i = getIntent();
-        String winner = i.getExtras().getString("winner");
-        String[] winnerChoice = new String[] {"draw", "player 1 wins",
-                "player 2 wins", "computer wins"};
+        //winner messages
+        int[] winners = {
+                R.string.display_winner_d,
+                -1,
+                R.string.display_winner_pl1,
+                (this.isPVP ? R.string.display_winner_pl2 : R.string.display_winner_c)
+        };
 
-        int z = 0;
-        while(!(winnerChoice[z].equals(winner)))
-        {
-            z++;
+        //set winner text
+        TextView displayWinner = (TextView) findViewById(R.id.txtResult);
+
+        int result = intent.getExtras().getInt("tictactoe.winner") + 1;
+
+        displayWinner.setText(winners[result]);
+    }
+
+    public void onClick(View v) {
+        Intent intent;
+
+        switch (v.getId()) {
+            case R.id.btnEnd_Replay:
+                intent = new Intent(v.getContext(), GameActivity.class);
+                intent.putExtra("tictactoe.isPVP", this.isPVP);
+                break;
+
+            case R.id.btnEnd_Menu:
+            default:
+                intent = new Intent(v.getContext(), MenuActivity.class);
+                break;
         }
 
-        String realWinner = winnerChoice[z];
-        displayWinner.setText(realWinner);
-
-        GameActivity gA = new GameActivity();
-        this.isPvp = gA.isPVP;
-
-        Button replay = (Button)findViewById(R.id.replayButton);
-        Button home = (Button)findViewById(R.id.homeButton);
+        startActivity(intent);
     }
-        public void onClick(View v) {
-            switch (v.getId())
-            {
-                case R.id.replayButton:
-                    if(isPvp) {
-                        Intent i = new Intent(v.getContext(), GameActivity.class);
-                        i.putExtra("isPvP", this.isPvp);
-                        startActivity(i);
-                        break;
-                    }else {
-                        this.isPvp = false;
-                        Intent i = new Intent(v.getContext(), GameActivity.class);
-                        i.putExtra("isPvP", this.isPvp);
-                        startActivity(i);
-                        break;
-                    }
-                case R.id.homeButton:
-                    Intent j = new Intent(v.getContext(), MenuActivity.class);
-                    startActivity(j);
-                    break;
-                }
-            }
-    }
+}

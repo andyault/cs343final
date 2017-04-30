@@ -2,7 +2,7 @@ package com.csci343.andy.tictactoe;
 
 import android.content.Intent;
 import android.graphics.RectF;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -16,7 +16,6 @@ public class GameActivity extends AppCompatActivity {
     //private variables
     private TicTacToeGame game;
     public boolean isPVP;
-    private boolean isPlayerTurn = true;
     private int currentPiece = 1;
 
     //methods
@@ -57,6 +56,10 @@ public class GameActivity extends AppCompatActivity {
      * handle touching
      */
     public void handleTouch(float x, float y) {
+        //don't let player play if it's computer's turn
+        if(this.currentPiece == 2 && !this.isPVP)
+            return;
+
         //nice and easy - get our i and j for our our space being pressed
         int i = -1;
         int j = -1;
@@ -179,15 +182,21 @@ public class GameActivity extends AppCompatActivity {
         int[] nextSpace = indexToCoords(num.get(index));
 
         //get i and j
-        int i = nextSpace[0];
-        int j = nextSpace[1];
+        final int i = nextSpace[0];
+        final int j = nextSpace[1];
 
+        //fill it - with a delay
+        Handler handler = new Handler();
 
-        //fill it
-        fillSpace(i, j);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fillSpace(i, j);
 
-        //done :)
-        prepNextMove();
+                //done :)
+                prepNextMove();
+            }
+        }, 750);
     }
 
     /**
@@ -250,20 +259,15 @@ public class GameActivity extends AppCompatActivity {
         return 0;
     }
 
+    /**
+     * end the game
+     */
     public void endGame(int result) {
-        //TODO - make this not suck
-        String[] winners = {
-            "draw",
-            null,
-            "player 1 wins",
-            (this.isPVP ? "player 2 wins" : "computer wins")
-        };
-
-        String winner = winners[result + 1];
         Intent displayWinner = new Intent(this, MainActivity.class);
-        displayWinner.putExtra("winner", winner);
+        displayWinner.putExtra("tictactoe.winner", result);
+        displayWinner.putExtra("tictactoe.isPVP", this.isPVP);
+
         startActivity(displayWinner);
-        //System.out.println(winners[result + 1]);
     }
 
     //util

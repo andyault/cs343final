@@ -10,6 +10,8 @@
     <!-- button texts -->
     <string name="btn_menu_player">Player vs. Player</string>
     <string name="btn_menu_computer">Player vs. Computer</string>
+    <string name="btn_end_playagain">Play again</string>
+    <string name="btn_end_mainmenu">Main menu</string>
 
     <!-- game messages -->
     <string name="txt_game_turn_p1">Player 1\'s Turn</string>
